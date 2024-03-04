@@ -5,10 +5,62 @@ import 'package:linkedin_clone_app/jobs/jobs_screen.dart';
 import 'package:linkedin_clone_app/jobs/upload_job.dart';
 import 'package:linkedin_clone_app/search/profile_company.dart';
 import 'package:linkedin_clone_app/search/search_companies.dart';
+import 'package:linkedin_clone_app/user_state.dart';
 
 class BottomNavigationBarForApp extends StatelessWidget {
   int indexNum = 0;
   BottomNavigationBarForApp({super.key, required this.indexNum});
+
+  void _logout(context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.black,
+            title: const Row(children: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.logout,
+                  color: Colors.white70,
+                  size: 36,
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Sign Out ',
+                    style: TextStyle(color: Colors.grey, fontSize: 28),
+                  )),
+            ]),
+            content: const Text(
+              'Do you want to Log Out from App ?',
+              style: TextStyle(color: Colors.grey, fontSize: 20),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('No',
+                      style: TextStyle(color: Colors.green, fontSize: 18))),
+              TextButton(
+                  onPressed: () {
+                    _auth.signOut();
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UserState()));
+                  },
+                  child: const Text('Yes',
+                      style: TextStyle(color: Colors.red, fontSize: 18))),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
