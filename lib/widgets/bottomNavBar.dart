@@ -97,7 +97,9 @@ class BottomNavigationBarForApp extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => ProfileCompanyScreen(userID: uid)));
-        } else if (index == 4) {}
+        } else if (index == 4) {
+          _logout(context);
+        }
       },
     );
   }
