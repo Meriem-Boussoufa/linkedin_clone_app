@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:linkedin_clone_app/jobs/job_details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:linkedin_clone_app/services/global_mathods.dart';
 
 class JobWidget extends StatefulWidget {
   final String taskTitle;
@@ -46,7 +49,7 @@ class _JobWidgetState extends State<JobWidget> {
                         taskID: widget.taskId,
                       )));
         },
-        onLongPress: () {},
+        onLongPress: _deleteDialog,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         leading: Container(
@@ -95,5 +98,56 @@ class _JobWidgetState extends State<JobWidget> {
         ),
       ),
     );
+  }
+
+  _deleteDialog() {
+    User? user = _auth.currentUser;
+    final _uid = user!.uid;
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            actions: [
+              TextButton(
+                  onPressed: () async {
+                    try {
+                      if (widget.uploadedBy == _uid) {
+                        await FirebaseFirestore.instance
+                            .collection('tasks')
+                            .doc(widget.taskId)
+                            .delete();
+                        await Fluttertoast.showToast(
+                            msg: "Task has been deleted",
+                            toastLength: Toast.LENGTH_LONG,
+                            backgroundColor: Colors.grey,
+                            fontSize: 18);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      } else {
+                        GlobalMethod.showErrorDialog(
+                            error: "You cannot perform this action", ctx: ctx);
+                      }
+                    } catch (error) {
+                      // ignore: use_build_context_synchronously
+                      GlobalMethod.showErrorDialog(
+                          error: "this task cant be deleted", ctx: ctx);
+                    } finally {}
+                  },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
+                      )
+                    ],
+                  )),
+            ],
+          );
+        });
   }
 }
