@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:linkedin_clone_app/services/global_variables.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -11,7 +14,7 @@ class SignUp extends StatefulWidget {
   State<SignUp> createState() => _SignUpState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
   late final TextEditingController _fullNameController =
@@ -50,6 +53,25 @@ class _SignUpState extends State<SignUp> {
   }
 
   @override
+  void initState() {
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 20));
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.linear)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((animationStatus) {
+            if (animationStatus == AnimationStatus.completed) {
+              _animationController.reset();
+              _animationController.forward();
+            }
+          });
+    _animationController.forward();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -77,7 +99,9 @@ class _SignUpState extends State<SignUp> {
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            showImageDialog();
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
@@ -278,17 +302,21 @@ class _SignUpState extends State<SignUp> {
                         const SizedBox(height: 40),
                         Center(
                           child: RichText(
-                              text: const TextSpan(children: [
-                            TextSpan(
+                              text: TextSpan(children: [
+                            const TextSpan(
                                 text: 'Already have an account ?',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16)),
-                            TextSpan(text: '      '),
+                            const TextSpan(text: '      '),
                             TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => Navigator.canPop(context)
+                                      ? Navigator.pop(context)
+                                      : null,
                                 text: 'Login here',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.blue,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16)),
@@ -302,5 +330,89 @@ class _SignUpState extends State<SignUp> {
         ],
       ),
     );
+  }
+
+  void showImageDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Please choose an option'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () {
+                    _getFromCamera();
+                  },
+                  child: const Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.camera,
+                          color: Colors.purple,
+                        ),
+                      ),
+                      Text(
+                        'Camera',
+                        style: TextStyle(color: Colors.purple),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    _getFromGallery();
+                  },
+                  child: const Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.image,
+                          color: Colors.purple,
+                        ),
+                      ),
+                      Text(
+                        'Gallery',
+                        style: TextStyle(color: Colors.purple),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  void _getFromCamera() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? newImageFile = await imagePicker.pickImage(
+        source: ImageSource.camera, maxHeight: 1080, maxWidth: 1080);
+    _cropImage(newImageFile!.path);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+  }
+
+  void _getFromGallery() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? newImageFile = await imagePicker.pickImage(
+        source: ImageSource.camera, maxHeight: 1080, maxWidth: 1080);
+    _cropImage(newImageFile!.path);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+  }
+
+  void _cropImage(filePath) async {
+    ImageCropper imageCropper = ImageCropper();
+    CroppedFile? croppedImage = await imageCropper.cropImage(
+        sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+    if (croppedImage != null) {
+      setState(() {
+        imageFile = croppedImage as File?;
+      });
+    }
   }
 }

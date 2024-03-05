@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:linkedin_clone_app/auth/register.dart';
 
 import 'firebase_options.dart';
 import 'user_state.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: Colors.black,
               primarySwatch: Colors.blue,
             ),
-            home: const UserState(),
+            home: const SignUp(),
           );
         });
   }
