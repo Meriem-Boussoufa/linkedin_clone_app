@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:linkedin_clone_app/persistent/persistent.dart';
@@ -103,6 +105,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
                               controller: deadLineDateController,
                               enabled: false,
                               fct: () {
+                                log('### Pressed Deadline Field ###');
                                 _pickDateDialog();
                               },
                               maxLength: 100,
@@ -161,7 +164,9 @@ class _UploadJobNowState extends State<UploadJobNow> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          fct();
+        },
         child: TextFormField(
           validator: (value) {
             if (value!.isEmpty) {
@@ -255,6 +260,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
   }
 
   void _pickDateDialog() async {
+    log('### Pick Date ###');
     picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
