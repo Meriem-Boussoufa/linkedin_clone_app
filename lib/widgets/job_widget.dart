@@ -102,7 +102,7 @@ class _JobWidgetState extends State<JobWidget> {
 
   _deleteDialog() {
     User? user = _auth.currentUser;
-    final _uid = user!.uid;
+    final uid = user!.uid;
     showDialog(
         context: context,
         builder: (ctx) {
@@ -111,7 +111,7 @@ class _JobWidgetState extends State<JobWidget> {
               TextButton(
                   onPressed: () async {
                     try {
-                      if (widget.uploadedBy == _uid) {
+                      if (widget.uploadedBy == uid) {
                         await FirebaseFirestore.instance
                             .collection('tasks')
                             .doc(widget.taskId)

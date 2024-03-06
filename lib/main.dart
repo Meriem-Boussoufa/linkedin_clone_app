@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:linkedin_clone_app/auth/register.dart';
 
 import 'firebase_options.dart';
-import 'user_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

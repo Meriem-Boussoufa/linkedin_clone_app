@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -7,12 +8,13 @@ import 'package:linkedin_clone_app/search/profile_company.dart';
 import 'package:linkedin_clone_app/search/search_companies.dart';
 import 'package:linkedin_clone_app/user_state.dart';
 
+// ignore: must_be_immutable
 class BottomNavigationBarForApp extends StatelessWidget {
   int indexNum = 0;
   BottomNavigationBarForApp({super.key, required this.indexNum});
 
   void _logout(context) {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
     showDialog(
         context: context,
@@ -48,7 +50,7 @@ class BottomNavigationBarForApp extends StatelessWidget {
                       style: TextStyle(color: Colors.green, fontSize: 18))),
               TextButton(
                   onPressed: () {
-                    _auth.signOut();
+                    auth.signOut();
                     Navigator.pop(context);
                     Navigator.pushReplacement(
                         context,
@@ -90,8 +92,8 @@ class BottomNavigationBarForApp extends StatelessWidget {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const UploadJobNow()));
         } else if (index == 3) {
-          final FirebaseAuth _auth = FirebaseAuth.instance;
-          final User? user = _auth.currentUser;
+          final FirebaseAuth auth = FirebaseAuth.instance;
+          final User? user = auth.currentUser;
           final String uid = user!.uid;
           Navigator.pushReplacement(
               context,

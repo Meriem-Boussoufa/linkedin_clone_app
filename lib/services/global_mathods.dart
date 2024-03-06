@@ -26,8 +26,8 @@ class GlobalMethod {
               ],
             ),
             content: Text(
-              '$error',
-              style: TextStyle(
+              error,
+              style: const TextStyle(
                   color: Colors.black,
                   fontSize: 20,
                   fontStyle: FontStyle.italic),
@@ -37,7 +37,7 @@ class GlobalMethod {
                 onPressed: () {
                   Navigator.canPop(context) ? Navigator.pop(context) : null;
                 },
-                child: Text(
+                child: const Text(
                   'OK',
                   style: TextStyle(color: Colors.red),
                 ),

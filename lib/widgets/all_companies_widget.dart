@@ -46,6 +46,7 @@ class _AllWorkersWidgetState extends State<AllWorkersWidget> {
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
             radius: 20,
+            // ignore: unnecessary_null_comparison, prefer_if_null_operators
             child: Image.network(widget.userImageUrl == null
                 ? 'https://external-preview.redd.it/5kh5OreeLd85QsqYO1Xz_4XSLYwZntfjqou-8fyBFoE.png?auto=webp&s=dbdabd04c399ce9c761ff899f5d38656d1de87c2'
                 : widget.userImageUrl),
@@ -83,7 +84,9 @@ class _AllWorkersWidgetState extends State<AllWorkersWidget> {
 
   void _mailTo() async {
     var mailUrl = 'mainto : ${widget.useremail}';
+    // ignore: deprecated_member_use
     if (await canLaunch(mailUrl)) {
+      // ignore: deprecated_member_use
       await launch(mailUrl);
     } else {
       throw 'Error Occured';

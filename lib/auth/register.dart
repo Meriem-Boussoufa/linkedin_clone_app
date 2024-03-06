@@ -399,7 +399,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   void _getFromGallery() async {
     ImagePicker imagePicker = ImagePicker();
     XFile? newImageFile = await imagePicker.pickImage(
-        source: ImageSource.camera, maxHeight: 1080, maxWidth: 1080);
+        source: ImageSource.gallery, maxHeight: 1080, maxWidth: 1080);
     _cropImage(newImageFile!.path);
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
@@ -411,7 +411,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
         sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
     if (croppedImage != null) {
       setState(() {
-        imageFile = croppedImage as File?;
+        imageFile = File(croppedImage.path);
       });
     }
   }
