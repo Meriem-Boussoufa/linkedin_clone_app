@@ -11,10 +11,10 @@ class UploadJobNow extends StatefulWidget {
 }
 
 class _UploadJobNowState extends State<UploadJobNow> {
-  final TextEditingController taskCategoryController =
+  final TextEditingController jobCategoryController =
       TextEditingController(text: 'Select Job Category');
-  final TextEditingController taskTitleController = TextEditingController();
-  final TextEditingController taskDescriptionController =
+  final TextEditingController jobTitleController = TextEditingController();
+  final TextEditingController jobDescriptionController =
       TextEditingController();
   final TextEditingController deadLineDateController =
       TextEditingController(text: 'Job Deadline Date');
@@ -27,9 +27,9 @@ class _UploadJobNowState extends State<UploadJobNow> {
   @override
   void dispose() {
     super.dispose();
-    taskCategoryController.dispose();
-    taskTitleController.dispose();
-    taskDescriptionController.dispose();
+    jobCategoryController.dispose();
+    jobTitleController.dispose();
+    jobDescriptionController.dispose();
     deadLineDateController.dispose();
   }
 
@@ -70,8 +70,77 @@ class _UploadJobNowState extends State<UploadJobNow> {
                         key: formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [],
+                          children: [
+                            _textTitles(lable: "Job Category"),
+                            _textFormFields(
+                              valueKey: 'TaskCategory',
+                              controller: jobCategoryController,
+                              enabled: false,
+                              fct: () {
+                                _showTaskCategoriesDialog(size: size);
+                              },
+                              maxLength: 100,
+                            ),
+                            _textTitles(lable: "Job Title :"),
+                            _textFormFields(
+                              valueKey: 'jobTitle',
+                              controller: jobTitleController,
+                              enabled: false,
+                              fct: () {},
+                              maxLength: 100,
+                            ),
+                            _textTitles(lable: "Job Description :"),
+                            _textFormFields(
+                              valueKey: 'jobDescription',
+                              controller: jobDescriptionController,
+                              enabled: false,
+                              fct: () {},
+                              maxLength: 100,
+                            ),
+                            _textTitles(lable: "Job Deadline Date :"),
+                            _textFormFields(
+                              valueKey: 'JobDeadline',
+                              controller: deadLineDateController,
+                              enabled: false,
+                              fct: () {
+                                _pickDateDialog();
+                              },
+                              maxLength: 100,
+                            ),
+                          ],
                         )),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : MaterialButton(
+                              onPressed: () {},
+                              color: Colors.black,
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(13)),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 14),
+                                child: Row(children: [
+                                  Text(
+                                    'Post Now',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Icon(
+                                    Icons.upload_file,
+                                    color: Colors.white,
+                                  )
+                                ]),
+                              ),
+                            ),
+                    ),
                   )
                 ],
               ),
@@ -147,7 +216,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
                     return InkWell(
                       onTap: () {
                         setState(() {
-                          taskCategoryController.text =
+                          jobCategoryController.text =
                               Persistent.taskCategoryList[index];
                         });
                         Navigator.pop(context);
