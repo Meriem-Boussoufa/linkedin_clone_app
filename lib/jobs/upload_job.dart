@@ -1,9 +1,14 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:linkedin_clone_app/persistent/persistent.dart';
+import 'package:linkedin_clone_app/services/global_mathods.dart';
+import 'package:linkedin_clone_app/services/global_variables.dart';
 import 'package:linkedin_clone_app/widgets/bottomNavBar.dart';
+import 'package:uuid/uuid.dart';
 
 class UploadJobNow extends StatefulWidget {
   const UploadJobNow({super.key});
@@ -33,6 +38,61 @@ class _UploadJobNowState extends State<UploadJobNow> {
     jobTitleController.dispose();
     jobDescriptionController.dispose();
     deadLineDateController.dispose();
+  }
+
+  void _uploadTask() async {
+    final jobID = Uuid().v4();
+    User? user = FirebaseAuth.instance.currentUser;
+    final uid = user!.uid;
+    final isValid = formKey.currentState!.validate();
+    if (isValid) {
+      if (deadLineDateController.text == 'Choose task Deadline date' ||
+          jobCategoryController.text == 'Choose task catgeory') {
+        GlobalMethod.showErrorDialog(
+            error: 'Please pick everything', ctx: context);
+        return;
+      }
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        await FirebaseFirestore.instance.collection('jobs').doc(jobID).set({
+          'jobId': jobID,
+          'uploadedBy': uid,
+          'email': user.email,
+          'jobTitle': jobTitleController.text,
+          'jobDescription': jobDescriptionController.text,
+          'deadlineDate': deadlineDateTimeStamp,
+          'deadlineDateTimeStamp': deadLineDateController.text,
+          'jobCategory': jobCategoryController.text,
+          'jobComments': [],
+          'recruitment': true,
+          'createdAt': Timestamp.now(),
+          'name': name,
+          'userImage': userImage,
+          'location': location,
+          'applicants': 0,
+        });
+        await Fluttertoast.showToast(
+          msg: 'The task has been uploaded',
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.grey,
+          fontSize: 18,
+        );
+        jobTitleController.clear();
+        jobDescriptionController.clear();
+        setState(() {
+          jobCategoryController.text = 'Choose job category';
+          deadLineDateController.text = 'Choose job Deadline date';
+        });
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } else {
+      log('It is not valid');
+    }
   }
 
   @override
