@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:linkedin_clone_app/persistent/persistent.dart';
 import 'package:linkedin_clone_app/services/global_variables.dart';
 import 'package:linkedin_clone_app/widgets/bottomNavBar.dart';
 import 'package:linkedin_clone_app/widgets/job_widget.dart';
@@ -105,5 +106,84 @@ class _JobsScreenState extends State<JobsScreen> {
             );
           },
         ));
+  }
+
+  _showTaskCategoriesDialog({required Size size}) {
+    showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            backgroundColor: Colors.black,
+            title: const Text(
+              'Job Category',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+            content: SizedBox(
+              width: size.width + 0.9,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: Persistent.taskCategoryList.length,
+                  itemBuilder: (ctx, index) {
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          jobCategoryFilter =
+                              Persistent.taskCategoryList[index];
+                          Navigator.pop(context);
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.arrow_right_outlined,
+                            color: Colors.grey,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              Persistent.taskCategoryList[index],
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      jobCategoryFilter = null;
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Close Filter',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  )),
+            ],
+          );
+        });
   }
 }
