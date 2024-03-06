@@ -40,8 +40,8 @@ class _UploadJobNowState extends State<UploadJobNow> {
     deadLineDateController.dispose();
   }
 
-  void _uploadTask() async {
-    final jobID = Uuid().v4();
+  void _uploadJob() async {
+    final jobID = const Uuid().v4();
     User? user = FirebaseAuth.instance.currentUser;
     final uid = user!.uid;
     final isValid = formKey.currentState!.validate();
@@ -107,7 +107,6 @@ class _UploadJobNowState extends State<UploadJobNow> {
             color: Colors.white10,
             child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
                   const Align(
@@ -147,7 +146,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
                             _textFormFields(
                               valueKey: 'jobTitle',
                               controller: jobTitleController,
-                              enabled: false,
+                              enabled: true,
                               fct: () {},
                               maxLength: 100,
                             ),
@@ -155,7 +154,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
                             _textFormFields(
                               valueKey: 'jobDescription',
                               controller: jobDescriptionController,
-                              enabled: false,
+                              enabled: true,
                               fct: () {},
                               maxLength: 100,
                             ),
@@ -173,37 +172,40 @@ class _UploadJobNowState extends State<UploadJobNow> {
                           ],
                         )),
                   ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: isLoading
-                          ? const CircularProgressIndicator()
-                          : MaterialButton(
-                              onPressed: () {},
-                              color: Colors.black,
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(13)),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 14),
-                                child: Row(children: [
-                                  Text(
-                                    'Post Now',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: isLoading
+                        ? const CircularProgressIndicator()
+                        : Center(
+                            child: SizedBox(
+                              width: 200,
+                              child: MaterialButton(
+                                onPressed: _uploadJob,
+                                color: Colors.black,
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(13)),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 14),
+                                  child: Row(children: [
+                                    Text(
+                                      'Post Now',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Icon(
-                                    Icons.upload_file,
-                                    color: Colors.white,
-                                  )
-                                ]),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      Icons.upload_file,
+                                      color: Colors.white,
+                                    )
+                                  ]),
+                                ),
                               ),
                             ),
-                    ),
+                          ),
                   )
                 ],
               ),
@@ -240,6 +242,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
           style: const TextStyle(
             color: Colors.white,
           ),
+          // ignore: unrelated_type_equality_checks
           maxLines: ValueKey == 'TaskDescription' ? 3 : 1,
           maxLength: maxLength,
           keyboardType: TextInputType.text,
@@ -272,7 +275,7 @@ class _UploadJobNowState extends State<UploadJobNow> {
                 color: Colors.white,
               ),
             ),
-            content: Container(
+            content: SizedBox(
               width: size.width * 0.9,
               child: ListView.builder(
                   shrinkWrap: true,

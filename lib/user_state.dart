@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:linkedin_clone_app/auth/login.dart';
-import 'package:linkedin_clone_app/jobs/jobs_screen.dart';
 import 'package:linkedin_clone_app/jobs/upload_job.dart';
 
 class UserState extends StatelessWidget {
