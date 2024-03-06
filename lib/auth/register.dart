@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:linkedin_clone_app/services/global_mathods.dart';
 import 'package:linkedin_clone_app/services/global_variables.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -69,6 +73,57 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
           });
     _animationController.forward();
     super.initState();
+  }
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  void _submitFormOnSignUp() async {
+    final isValid = _signUpFormKey.currentState!.validate();
+    if (isValid) {
+      if (imageFile == null) {
+        GlobalMethod.showErrorDialog(
+            error: 'Please pick an image', ctx: context);
+        return;
+      }
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        await auth.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passTextController.text.trim(),
+        );
+
+        final User? user = auth.currentUser;
+        final uid = user!.uid;
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('userImages')
+            .child('$uid.jpg');
+        await ref.putFile(imageFile!);
+        imageUrl = await ref.getDownloadURL();
+        FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'id': uid,
+          'name': _fullNameController.text,
+          'email': _emailController.text,
+          'userImage': imageUrl,
+          'phoneNumber': _phoneNumberController.text,
+          'location': _locationController.text,
+          'createAt': Timestamp.now(),
+        });
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      } catch (error) {
+        setState(() {
+          isLoading = false;
+        });
+        // ignore: use_build_context_synchronously
+        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -278,7 +333,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                                 ),
                               )
                             : MaterialButton(
-                                onPressed: () {},
+                                onPressed: _submitFormOnSignUp,
                                 color: Colors.blue,
                                 elevation: 8,
                                 shape: RoundedRectangleBorder(
