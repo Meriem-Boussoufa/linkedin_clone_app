@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:linkedin_clone_app/auth/login.dart';
 import 'package:linkedin_clone_app/services/global_mathods.dart';
 import 'package:linkedin_clone_app/services/global_variables.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -367,9 +368,11 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                             const TextSpan(text: '      '),
                             TextSpan(
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () => Navigator.canPop(context)
-                                      ? Navigator.pop(context)
-                                      : null,
+                                  ..onTap = () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen())),
                                 text: 'Login here',
                                 style: const TextStyle(
                                     color: Colors.blue,
