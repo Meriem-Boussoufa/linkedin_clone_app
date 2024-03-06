@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:linkedin_clone_app/auth/forget_pass.dart';
 import 'package:linkedin_clone_app/auth/register.dart';
+import 'package:linkedin_clone_app/services/global_mathods.dart';
 
 import '../services/global_variables.dart';
 
@@ -39,7 +42,51 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  void _submitFormOnLogin() {}
+  @override
+  void initState() {
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 20));
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.linear)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((animationStatus) {
+            if (animationStatus == AnimationStatus.completed) {
+              _animationController.reset();
+              _animationController.forward();
+            }
+          });
+    _animationController.forward();
+    super.initState();
+  }
+
+  void _submitFormOnLogin() async {
+    final isValid = _loginFormKey.currentState!.validate();
+    if (isValid) {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        await _auth.signInWithEmailAndPassword(
+          email: _emailController.text.trim().toLowerCase(),
+          password: _passTextController.text.trim(),
+        );
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      } catch (error) {
+        setState(() {
+          isLoading = false;
+        });
+        // ignore: use_build_context_synchronously
+        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        log('Error occured $error');
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
